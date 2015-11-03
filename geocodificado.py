@@ -6,24 +6,31 @@ import csv
 # El array de puntos contiene todas las columnas del csv
 def getPoints(csvFile, fieldNameAddress, delimiter=',', quoting='"', decodeTo='utf8'):
 	g = []
+	i = 0 
 	with open(csvFile) as csvfile:
 		reader = csv.DictReader(csvfile)
 		for row in reader:
 			direc = row[fieldNameAddress]
 			direc = direc.decode(decodeTo)
-			tmp_g = geocoder.google(direc)
+			tmp_g = geocoder.osm(direc)
 			listRow = []
 			for key in row:
 				listRow.append(row[key])
 
 			try:
-				listRow.append(tmp_g.latlng[0])
-				listRow.append(tmp_g.latlng[1])
+				listRow.append(tmp_g.x)
+				listRow.append(tmp_g.y)
 			except:
 				listRow.append("err")
 				listRow.append("err")
-
-			g.append(listRow)		
+			
+			#print(tmp_g.x)
+			#print(tmp_g.y)
+			g.append(listRow)
+			i = i + 1
+			print(i)
+			print(listRow)
+					
 	return g
 	
 def writeCsv(mzPoints, fileTarget):
@@ -33,7 +40,7 @@ def writeCsv(mzPoints, fileTarget):
 		spamwriter.writerow(['Spam', 'Lovely Spam', 'Wonderful Spam'])
 
 
-puntos = getPoints('/tmp/personas.csv', 'Direccion')
+puntos = getPoints('/tmp/personas2000.csv', 'Direccion')
 with open("/tmp/puntos.csv", "wb") as f:
     writer = csv.writer(f)
     writer.writerows(puntos)
